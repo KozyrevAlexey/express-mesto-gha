@@ -1,0 +1,93 @@
+
+const User = require('../models/user')
+
+const { ERROR_VALIDATION, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../errors/errors');
+
+const getUsers = (req, res) => {
+  User.find({})
+    .populate(['name', 'about', 'avatar'])
+    .then(users => res.send(users))
+    .catch(err => {
+      return res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message });
+    });
+};
+
+const createUser = (req, res) => {
+  const { name, about, avatar } = req.body;
+  User.create({ name, about, avatar })
+    .then(user => {
+      res.send(user)
+    })
+    .catch(err => {
+      if (!name || !avatar || err.message) {
+        res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
+        return;
+      } else {
+        res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message })
+      }
+    });
+};
+
+const getUserBuId = (req, res) => {
+  const { userId } = req.params;
+  User.findById(userId)
+    .then(user => {
+      if (!user) {
+        res.status(ERROR_NOT_FOUND).send({ message: `Пользователь не найден` });
+        return;
+      }
+      res.send(user);
+    })
+    .catch(err => {
+      if (!User[userId]) {
+        res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
+        return;
+      } else {
+        res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message });
+      }
+    });
+};
+
+const updateProfileUser = (req, res) => {
+  const { name, about } = req.body;
+  const { _id } = req.user;
+  User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
+    .then(user => res.send(user))
+    .catch(err => {
+      if (!name || !about || err.message) {
+        res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
+        return;
+      } else if (!User[_id]) {
+        res.status(ERROR_NOT_FOUND).send({ message: `Пользователь не найден` });
+        return;
+      } else {
+        res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message })
+      }
+    })
+};
+
+const updateAvatarUser = (req, res) => {
+  const { avatar } = req.body;
+  const { _id } = req.user;
+  User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
+    .then(user => res.send(user))
+    .catch(err => {
+      if (!User[_id]) {
+        res.status(ERROR_NOT_FOUND).send({ message: `Пользователь не найден` });
+        return;
+      } else if (!avatar) {
+        res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
+        return;
+      } else {
+        res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message })
+      }
+    })
+}
+
+module.exports = {
+  getUsers,
+  createUser,
+  getUserBuId,
+  updateProfileUser,
+  updateAvatarUser,
+};
