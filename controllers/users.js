@@ -14,16 +14,16 @@ const getUsers = (req, res) => {
 
 const getUserBuId = (req, res) => {
   User.findById(req.params.id)
-    .then(user => {
+    .then((user) => {
       if (!user) {
-        res.status(ERROR_NOT_FOUND).send({ message: `Пользователь не найден` });
+        res.status(ERROR_VALIDATION).send({ message: `Пользователь не найден` });
         return;
       }
       res.send(user);
     })
     .catch(err => {
       if (!User[id]) {
-        res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
+        res.status(ERROR_NOT_FOUND).send({ message: `Переданные данные некорректны` });
         return;
       } else {
         res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message });
