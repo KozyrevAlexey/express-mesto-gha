@@ -14,15 +14,13 @@ const getUsers = (req, res) => {
 
 const getUserBuId = (req, res) => {
   User.findById(req.params.id)
-    .then((user) => {
-      if (!user) {
-        res.status(ERROR_VALIDATION).send({ message: `Пользователь не найден` });
-        return;
-      }
-      res.send(user);
-    })
+    .orFail(() => new Error("Not Found"))
+    .then((user) => res.send(user))
     .catch(err => {
-      if (!User[id]) {
+      if (err.name === "CastError") {
+        res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
+        return;
+      } else if (err.message === "Not Found") {
         res.status(ERROR_NOT_FOUND).send({ message: `Переданные данные некорректны` });
         return;
       } else {
