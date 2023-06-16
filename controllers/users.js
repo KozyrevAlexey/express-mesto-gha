@@ -13,15 +13,15 @@ const getUsers = (req, res) => {
 };
 
 const getUserBuId = (req, res) => {
-  User.findById(req.params.id)
+  User.findById(req.params.userId)
     .orFail(() => new Error("Not Found"))
     .then((user) => res.send(user))
-    .catch(err => {
+    .catch((err) => {
       if (err.name === "CastError") {
         res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
         return;
       } else if (err.message === "Not Found") {
-        res.status(ERROR_NOT_FOUND).send({ message: `Переданные данные некорректны` });
+        res.status(ERROR_NOT_FOUND).send({ message: `Пользователь не найден` });
         return;
       } else {
         res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message });
