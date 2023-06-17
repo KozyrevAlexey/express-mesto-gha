@@ -5,7 +5,7 @@ const { ERROR_VALIDATION, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../errors/
 
 const getUsers = (req, res) => {
   User.find({})
-    .populate(['name', 'about', 'avatar'])
+    // .populate(['name', 'about', 'avatar'])
     .then((users) => res.send(users))
     .catch(err => {
       return res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message });
@@ -20,12 +20,11 @@ const getUserBuId = (req, res) => {
       if (err.name === "CastError") {
         res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
         return;
-      } else if (err.message === "Not Found") {
+      } if (err.message === "Not Found") {
         res.status(ERROR_NOT_FOUND).send({ message: `Пользователь не найден` });
         return;
-      } else {
-        res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message });
       }
+      res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message });
     });
 };
 
