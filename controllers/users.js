@@ -5,7 +5,6 @@ const { ERROR_VALIDATION, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../errors/
 
 const getUsers = (req, res) => {
   User.find({})
-    // .populate(['name', 'about', 'avatar'])
     .then((users) => res.send(users))
     .catch(err => {
       return res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message });
