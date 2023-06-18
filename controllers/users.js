@@ -34,7 +34,7 @@ const createUser = (req, res) => {
       res.send(user)
     })
     .catch(err => {
-      if (!name || !avatar || err.message) {
+      if (err.name === "validationError") {
         res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
         return;
       } else {
@@ -51,11 +51,8 @@ const updateProfileUser = (req, res) => {
   User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch(err => {
-      if (!name || !about || err.message) {
+      if (err.name === "validationError") {
         res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
-        return;
-      } else if (!User[_id]) {
-        res.status(ERROR_NOT_FOUND).send({ message: `Пользователь не найден` });
         return;
       } else {
         res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message })
@@ -69,10 +66,10 @@ const updateAvatarUser = (req, res) => {
   User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch(err => {
-      if (!User[_id]) {
+      if (err.name === "Not Found") {
         res.status(ERROR_NOT_FOUND).send({ message: `Пользователь не найден` });
         return;
-      } else if (!avatar) {
+      } else if (err.name === "CastError") {
         res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
         return;
       } else {
