@@ -66,10 +66,7 @@ const updateAvatarUser = (req, res) => {
   User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch(err => {
-      if (err.name === "Not Found") {
-        res.status(ERROR_NOT_FOUND).send({ message: `Пользователь не найден` });
-        return;
-      } else if (err.name === "CastError") {
+      if (err.name === "ValidationError") {
         res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
         return;
       } else {
