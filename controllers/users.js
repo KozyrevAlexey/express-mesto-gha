@@ -19,11 +19,12 @@ const getUserBuId = (req, res) => {
       if (err.name === "CastError") {
         res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
         return;
-      } else if (err.message === "Not Found") {
+      } if (err.message === "Not Found") {
         res.status(ERROR_NOT_FOUND).send({ message: `Пользователь не найден` });
         return;
       }
       res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message });
+      return;
     });
 };
 
@@ -32,7 +33,7 @@ const createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === "validationError") {
+      if (err.name === "ValidationError") {
         res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
         return;
       } else {
@@ -41,15 +42,13 @@ const createUser = (req, res) => {
     });
 };
 
-
-
 const updateProfileUser = (req, res) => {
   const { name, about } = req.body;
   const { _id } = req.user;
   User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === "validationError") {
+      if (err.name === "ValidationError") {
         res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
         return;
       } else {
