@@ -19,7 +19,7 @@ const getUserBuId = (req, res) => {
       if (err.name === "CastError") {
         res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
         return;
-      } if (err.message === "Not Found") {
+      } else if (err.message === "Not Found") {
         res.status(ERROR_NOT_FOUND).send({ message: `Пользователь не найден` });
         return;
       }
@@ -30,10 +30,8 @@ const getUserBuId = (req, res) => {
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => {
-      res.send(user)
-    })
-    .catch(err => {
+    .then((user) => res.send(user))
+    .catch((err) => {
       if (err.name === "validationError") {
         res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
         return;
@@ -50,7 +48,7 @@ const updateProfileUser = (req, res) => {
   const { _id } = req.user;
   User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send(user))
-    .catch(err => {
+    .catch((err) => {
       if (err.name === "validationError") {
         res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
         return;
@@ -65,7 +63,7 @@ const updateAvatarUser = (req, res) => {
   const { _id } = req.user;
   User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send(user))
-    .catch(err => {
+    .catch((err) => {
       if (err.name === "ValidationError") {
         res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
         return;
