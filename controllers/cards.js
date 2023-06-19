@@ -43,9 +43,8 @@ const deliteCardById = (req, res) => {
 };
 
 const putLikeCard = (req, res) => {
-  const { _id } = req.user;
-  const { cardId } = req.params;
-  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, { new: true })
+  Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+    .orFail(() => new Error("Not Found"))
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === "CastError") {
@@ -61,9 +60,8 @@ const putLikeCard = (req, res) => {
 };
 
 const deliteLikeCard = (req, res) => {
-  const { _id } = req.user;
-  const { cardId } = req.params;
-  Card.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, { new: true })
+  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
+    .orFail(() => new Error("Not Found"))
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === "CastError") {
