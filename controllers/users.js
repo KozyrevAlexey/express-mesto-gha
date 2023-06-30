@@ -1,14 +1,13 @@
 
+const bcrypt = require('bcryptjs');
 const User = require('../models/user')
 
 const { ERROR_VALIDATION, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../errors/errors');
 
-const getUsers = (req, res) => {
+const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(err => {
-      return res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message });
-    });
+    .catch(next);
 };
 
 const getUserBuId = (req, res) => {
@@ -28,19 +27,35 @@ const getUserBuId = (req, res) => {
     });
 };
 
-const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
-        return;
-      } else {
-        res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message })
-      }
-    });
-};
+const createUser = (req, res, next) => {
+  const { name, about, avatar, email, password } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hashedPassword) => {
+      User.create({ name, about, avatar, email, password: hashedPassword })
+        .then((user) => res.send(user))
+        .catch(next);
+    })
+.catch(next);
+}
+
+
+
+
+
+
+// {
+//   const { name, about, avatar } = req.body;
+//   User.create({ name, about, avatar })
+//     .then((user) => res.send(user))
+//     .catch((err) => {
+//       if (err.name === "ValidationError") {
+//         res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
+//         return;
+//       } else {
+//         res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message })
+//       }
+//     });
+// };
 
 const updateProfileUser = (req, res) => {
   const { name, about } = req.body;
