@@ -1,9 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = require('./routes');
-const { ERROR_NOT_FOUND } = require('./errors/errors');
 const cookieParser = require('cookie-parser');
 const errorsHandler = require('./middlewares/errorsHandler');
+const { errors } = require('celebrate');
 
 const { PORT = 3000 } = process.env
 
@@ -13,7 +13,9 @@ app.use(cookieParser());
 
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+
 app.use(router);
+app.use(errors());
 app.use(errorsHandler);
 
 
