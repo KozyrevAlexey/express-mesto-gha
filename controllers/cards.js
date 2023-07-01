@@ -1,43 +1,39 @@
 const Card = require('../models/card');
 
-const { ERROR_VALIDATION, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../errors/errors');
+const { ErrorValidation } = require('../errors/errorValidation');
+const { ErrorNotFound } = require('../errors/errorNotFound');
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch(err => {
-      res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message });
-    })
+    .catch(next);
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { _id } = req.user;
   const { name, link } = req.body;
   Card.create({ name, link, owner: _id })
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name = "ValidationError") {
-        res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
-        return;
+        next(new ErrorValidation(`Переданные данные некорректны`));
       } else {
-        res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message });
+        next(err);
       }
     });
 }
 
-const deliteCardById = (req, res) => {
+const deliteCardById = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .orFail(() => new Error("Not Found"))
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
-        return;
+        next(new ErrorValidation(`Переданные данные некорректны`));
       } else if (err.name = "Not Found") {
-        res.status(ERROR_NOT_FOUND).send({ message: `Переданные данные некорректны` });
-        return;
+        next(new ErrorNotFound(`Пользователь не найден`));
       } else {
-        res.status(ERROR_DEFAULT).send({ message: `Произошла неизвестная ошибка`, err: err.message });
+        next(err);
       }
     })
 };
@@ -48,13 +44,11 @@ const putLikeCard = (req, res) => {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
-        return;
+        next(new ErrorValidation(`Переданные данные некорректны`));
       } else if (err.name = "Not Found") {
-        res.status(ERROR_NOT_FOUND).send({ message: `Переданные данные некорректны` });
-        return;
+        next(new ErrorNotFound(`Пользователь не найден`));
       } else {
-        res.status(ERROR_DEFAULT).sendsend({ message: `Произошла неизвестная ошибка`, err: err.message });
+        next(err);
       }
     })
 };
@@ -65,13 +59,11 @@ const deliteLikeCard = (req, res) => {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(ERROR_VALIDATION).send({ message: `Переданные данные некорректны` });
-        return;
+        next(new ErrorValidation(`Переданные данные некорректны`));
       } else if (err.name = "Not Found") {
-        res.status(ERROR_NOT_FOUND).send({ message: `Переданные данные некорректны` });
-        return;
+        next(new ErrorNotFound(`Пользователь не найден`));
       } else {
-        res.status(ERROR_DEFAULT).sendsend({ message: `Произошла неизвестная ошибка`, err: err.message });
+        next(err);
       }
     })
 };
