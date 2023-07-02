@@ -2,6 +2,7 @@ const Card = require('../models/card');
 
 const ErrorValidation = require('../errors/errorValidation');
 const ErrorNotFound = require('../errors/errorNotFound');
+const ErrorForbidden = require('../errors/errorForbidden.js');
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -25,22 +26,22 @@ const createCard = (req, res, next) => {
 
 const deliteCardById = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail(() => new Error("Not Found"))
-    .then((card) => res.send(card))
-    .catch((err) => {
-      if (err.name === "CastError") {
-        next(new ErrorValidation(`Переданные данные некорректны`));
-      } else if (err.name = "Not Found") {
-        next(new ErrorNotFound(`Пользователь не найден`));
+    .orFail(() => new ErrorNotFound(`Карточка для удаления не найдена`))
+    .then((card) => {
+      if (card.owner.toString() === req.user._id) {
+        card.deleteOne(card)
+        .then((cards) => res.send(cards))
+        .catch(next)
       } else {
-        next(err);
+        throw new ErrorForbidden('Чужую карточку удалить нельзя')
       }
     })
+    .catch(next);
 };
 
 const putLikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
-    .orFail(() => new Error("Not Found"))
+    // .orFail(() => new Error("Not Found"))
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === "CastError") {
@@ -55,7 +56,7 @@ const putLikeCard = (req, res, next) => {
 
 const deliteLikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .orFail(() => new Error("Not Found"))
+    // .orFail(() => new Error("Not Found"))
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === "CastError") {
