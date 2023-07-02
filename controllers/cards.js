@@ -38,7 +38,7 @@ const deliteCardById = (req, res, next) => {
     })
 };
 
-const putLikeCard = (req, res) => {
+const putLikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .orFail(() => new Error("Not Found"))
     .then((card) => res.send(card))
@@ -53,7 +53,7 @@ const putLikeCard = (req, res) => {
     })
 };
 
-const deliteLikeCard = (req, res) => {
+const deliteLikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .orFail(() => new Error("Not Found"))
     .then((card) => res.send(card))
