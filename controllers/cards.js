@@ -42,12 +42,16 @@ const deliteCardById = (req, res, next) => {
 const putLikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     // .orFail(() => new Error("Not Found"))
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (!card) {
+        throw new ErrorNotFound(`Карточка не найдена`)
+      } else {
+        next(res.send(card));
+      }
+    })
     .catch((err) => {
       if (err.name === "CastError") {
         next(new ErrorValidation(`Переданные данные некорректны`));
-      } else if (err.name = "Not Found") {
-        next(new ErrorNotFound(`Пользователь не найден`));
       } else {
         next(err);
       }
@@ -57,12 +61,16 @@ const putLikeCard = (req, res, next) => {
 const deliteLikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     // .orFail(() => new Error("Not Found"))
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (!card) {
+        throw new ErrorNotFound(`Карточка не найдена`)
+      } else {
+        next(res.send(card));
+      }
+    })
     .catch((err) => {
       if (err.name === "CastError") {
         next(new ErrorValidation(`Переданные данные некорректны`));
-      } else if (err.name = "Not Found") {
-        next(new ErrorNotFound(`Пользователь не найден`));
       } else {
         next(err);
       }
