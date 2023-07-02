@@ -16,13 +16,17 @@ const getUsers = (req, res, next) => {
 
 const getUserBuId = (req, res, next) => {
   User.findById(req.params.userId)
-    .orFail(() => new Error("Not Found"))
-    .then((user) => res.send(user))
+    // .orFail(() => new Error("Not Found"))
+    .then((user) => {
+      if (!user) {
+        throw new ErrorNotFound(`Пользователь не найден`);
+      } else {
+        next(res.send(user));
+      }
+    })
     .catch((err) => {
       if (err.name === "CastError") {
         next(new ErrorValidation(`Переданные данные некорректны`));
-      } if (err.message === "Not Found") {
-        next(new ErrorNotFound(`Пользователь не найден`));
       }
       next(err);
     });
@@ -44,10 +48,10 @@ const createUser = (req, res, next) => {
     );
 }
 
-const updateProfileUser = (req, res, next, param) => {
-  // const { name, about } = req.body;
+const updateProfileUser = (req, res, next) => {
+  const { name, about } = req.body;
   const { _id } = req.user;
-  User.findByIdAndUpdate(_id, param, { new: true, runValidators: true })
+  User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
