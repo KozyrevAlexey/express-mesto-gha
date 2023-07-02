@@ -6,7 +6,7 @@ const { getCards, createCard, deliteCardById, putLikeCard, deliteLikeCard, } = r
 
 router.get('/', getCards);
 router.post('/', celebrate({
-  params: Joi.object().keys({
+  body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
     link: Joi.string().regex(regex).required(),
   })
