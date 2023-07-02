@@ -3,10 +3,10 @@ const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const User = require('../models/user')
 
-const { ErrorAuth } = require('../errors/errorAuth');
-const  ErrorConflict  = require('../errors/errorConflict');
-const { ErrorValidation } = require('../errors/errorValidation');
-const { ErrorNotFound } = require('../errors/errorNotFound');
+const ErrorAuth = require('../errors/errorAuth');
+const ErrorConflict = require('../errors/errorConflict');
+const ErrorValidation = require('../errors/errorValidation');
+const ErrorNotFound = require('../errors/errorNotFound');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -18,8 +18,8 @@ const getUserBuId = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        throw new ErrorNotFound('Нет такого пользователя');
-      } else  {
+        throw new ErrorNotFound(`Пользователь не найден`);
+      } else {
         next(res.send(user));
       }
     })
@@ -40,7 +40,7 @@ const createUser = (req, res, next) => {
       if (err.name === "ValidationError") {
         next(new ErrorValidation(`Переданные данные некорректны`));
       } else if (err.code === 11000) {
-        next(new ErrorConflict(`Переданные данные некорректны`));
+        next(new ErrorConflict(`Такой e-mail уже зарегистрирован`));
       }
       next(err);
     }
@@ -56,7 +56,7 @@ const updateProfileUser = (req, res, next) => {
       if (err.name === "ValidationError") {
         next(new ErrorValidation(`Переданные данные некорректны`));
       } else {
-        next(err)
+        next(err);
       }
     })
 };
@@ -70,14 +70,13 @@ const updateAvatarUser = (req, res) => {
       if (err.name === "ValidationError") {
         next(new ErrorValidation(`Переданные данные некорректны`));
       } else {
-        next(err)
+        next(err);
       }
     })
 }
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-
   User.findOne({ email })
     .select('+password')
     .orFail(() => new ErrorAuth('Пользователь не найден'))
@@ -87,7 +86,7 @@ const login = (req, res, next) => {
           if (isValidUser) {
             const jwt = jsonWebToken.sign({ _id: user._id }, 'SECRET');
             res.cookie('jwt', jwt, {
-              maxAge: 360000,
+              maxAge: 36000000,
               httpOnly: true,
               sameSite: true,
             })
@@ -103,14 +102,9 @@ const login = (req, res, next) => {
 
 const getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) => {
-      if (!user) {
-        throw new ErrorNotFound('Нет пользователя с указанным id')
-      } else {
-        next(res.send(user));
-      }
-    })
-    .catch(next);
+    .orFail(new ErrorNotFound('Нет пользователя с указанным id'))
+    .then((user) => res.send(user))
+    .catch((err) => next(err));
 }
 
 module.exports = {
