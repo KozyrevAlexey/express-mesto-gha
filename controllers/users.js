@@ -16,16 +16,13 @@ const getUsers = (req, res, next) => {
 
 const getUserBuId = (req, res, next) => {
   User.findById(req.params.userId)
-    .then((user) => {
-      if (!user) {
-        throw new ErrorNotFound('Нет такого пользователя');
-      } else  {
-        next(res.send(user));
-      }
-    })
+    .orFail(() => new Error("Not Found"))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === "CastError") {
         next(new ErrorValidation(`Переданные данные некорректны`));
+      } if (err.message === "Not Found") {
+        next(new ErrorNotFound(`Пользователь не найден`));
       }
       next(err);
     });
@@ -91,7 +88,7 @@ const login = (req, res, next) => {
               httpOnly: true,
               sameSite: true,
             })
-            res.send(user)
+            res.send(user.toJSON())
           } else {
             throw new ErrorAuth('Неправильный пароль');
           }
