@@ -102,15 +102,18 @@ const login = (req, res, next) => {
 }
 
 const getUserInfo = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      if (!user) {
-        throw new ErrorNotFound('Нет пользователя с указанным id')
-      } else {
-        next(res.send(user));
-      }
-    })
-    .catch(next);
+    User.findById(req.user._id)
+    .orFail(new ErrorNotFound ('Нет пользователя с указанным id'))
+    .then((user) => res.send(user))
+    .catch((err) => next(err));
+  //   .then((user) => {
+  //     if (!user) {
+  //       throw new ErrorNotFound('Нет пользователя с указанным id')
+  //     } else {
+  //       next(res.send(user));
+  //     }
+  //   })
+  //   .catch(next);
 }
 
 module.exports = {
