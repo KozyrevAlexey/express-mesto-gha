@@ -5,8 +5,6 @@ const { createUser, login } = require('../controllers/users');
 const auth = require('../middlewares/auth');
 const ErrorNotFound = require('../errors/errorNotFound');
 const { validateCreateUser, validateLogin } = require('../utils/regex');
-// const { celebrate, Joi } = require('celebrate');
-// const { regex } = require('../utils/regex');
 
 
 router.post('/signup', validateCreateUser, createUser);

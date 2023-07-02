@@ -1,7 +1,5 @@
 const router = require('express').Router();
-const { validateCreateCard, validateDeliteCardById, validateDeliteLikeCard, validatePutLikeCard } = require('../utils/regex')
-// const { celebrate, Joi } = require('celebrate');
-// const { regex } = require('../utils/regex')
+const { validateCreateCard, validateDeliteCardById, validateDeliteLikeCard, validatePutLikeCard } = require('../utils/regex');
 
 const { getCards, createCard, deliteCardById, putLikeCard, deliteLikeCard, } = require('../controllers/cards');
 

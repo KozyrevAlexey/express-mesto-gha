@@ -30,8 +30,8 @@ const deliteCardById = (req, res, next) => {
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
         card.deleteOne(card)
-        .then((cards) => res.send(cards))
-        .catch(next)
+          .then((cards) => res.send(cards))
+          .catch(next)
       } else {
         throw new ErrorForbidden('Чужую карточку удалить нельзя')
       }
@@ -41,7 +41,6 @@ const deliteCardById = (req, res, next) => {
 
 const putLikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
-    // .orFail(() => new Error("Not Found"))
     .then((card) => {
       if (!card) {
         throw new ErrorNotFound(`Карточка не найдена`)
@@ -60,7 +59,6 @@ const putLikeCard = (req, res, next) => {
 
 const deliteLikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-    // .orFail(() => new Error("Not Found"))
     .then((card) => {
       if (!card) {
         throw new ErrorNotFound(`Карточка не найдена`)
