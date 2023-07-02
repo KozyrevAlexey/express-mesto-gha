@@ -88,7 +88,7 @@ const login = (req, res, next) => {
               httpOnly: true,
               sameSite: true,
             })
-            res.send(user.toJSON())
+            res.send(user)
           } else {
             throw new ErrorAuth('Неправильный пароль');
           }
