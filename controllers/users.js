@@ -75,7 +75,7 @@ const updateAvatarUser = (req, res) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findOne({ email })
+  return User.findOne({ email })
     .select('+password')
     .orFail(() => new ErrorAuth('Пользователь не найден'))
     .then((user) => {
@@ -84,7 +84,7 @@ const login = (req, res, next) => {
           if (isValidUser) {
             const jwt = jsonWebToken.sign({ _id: user._id }, 'SECRET');
             res.cookie('jwt', jwt, {
-              maxAge: 360000,
+              maxAge: 36000000,
               httpOnly: true,
               sameSite: true,
             })
