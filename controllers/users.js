@@ -3,10 +3,10 @@ const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const User = require('../models/user')
 
-const { ErrorAuth } = require('../errors/errorAuth');
+const ErrorAuth = require('../errors/errorAuth');
 const ErrorConflict = require('../errors/errorConflict');
-const { ErrorValidation } = require('../errors/errorValidation');
-const { ErrorNotFound } = require('../errors/errorNotFound');
+const ErrorValidation = require('../errors/errorValidation');
+const ErrorNotFound = require('../errors/errorNotFound');
 
 const getUsers = (req, res, next) => {
   User.find({})
