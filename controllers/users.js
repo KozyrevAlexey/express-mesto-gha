@@ -90,9 +90,10 @@ const login = (req, res, next) => {
             })
             res.send(user.toJSON())
           } else {
-            res.status(401).send({ message: 'Неверный пароль' })
+            throw new ErrorAuth('Неправильный пароль');
           }
         })
+        .catch(next);
     })
     .catch(next);
 }
