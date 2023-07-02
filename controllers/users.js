@@ -4,7 +4,7 @@ const jsonWebToken = require('jsonwebtoken');
 const User = require('../models/user')
 
 const { ErrorAuth } = require('../errors/errorAuth');
-const  ErrorConflict  = require('../errors/errorConflict');
+const ErrorConflict = require('../errors/errorConflict');
 const { ErrorValidation } = require('../errors/errorValidation');
 const { ErrorNotFound } = require('../errors/errorNotFound');
 
@@ -37,7 +37,7 @@ const createUser = (req, res, next) => {
       if (err.name === "ValidationError") {
         next(new ErrorValidation(`Переданные данные некорректны`));
       } else if (err.code === 11000) {
-        next(new ErrorConflict(`Переданные данные некорректны`));
+        next(new ErrorConflict(`Такой e-mail уже зарегистрирован`));
       }
       next(err);
     }
@@ -53,7 +53,7 @@ const updateProfileUser = (req, res, next) => {
       if (err.name === "ValidationError") {
         next(new ErrorValidation(`Переданные данные некорректны`));
       } else {
-        next(err)
+        next(err);
       }
     })
 };
@@ -74,8 +74,7 @@ const updateAvatarUser = (req, res) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-
-  return User.findOne({ email })
+  User.findOne({ email })
     .select('+password')
     .orFail(() => new ErrorAuth('Пользователь не найден'))
     .then((user) => {
