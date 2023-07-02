@@ -1,11 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
-const router = require('./routes');
 const cookieParser = require('cookie-parser');
+const router = require('./routes');
 
 const errorsHandler = require('./middlewares/errorsHandler');
-
 
 const { PORT = 3000 } = process.env
 

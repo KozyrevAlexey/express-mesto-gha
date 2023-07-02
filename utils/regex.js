@@ -9,7 +9,7 @@ const validateUserId = celebrate({
 });
 
 const validateProfilUpdate = celebrate({
-  params: Joi.object().keys({
+  body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
     about: Joi.string().min(2).max(30).required(),
   }),
