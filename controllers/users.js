@@ -7,8 +7,6 @@ const ErrorAuth = require('../errors/errorAuth');
 const ErrorConflict = require('../errors/errorConflict');
 const ErrorValidation = require('../errors/errorValidation');
 const ErrorNotFound = require('../errors/errorNotFound');
-const ErrorDefault = require('../errors/errorDefault');
-
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -72,7 +70,9 @@ const updateAvatarUser = (req, res) => {
     .catch((err) => {
       if (err.name === "ValidationError") {
         next(new ErrorValidation(`Переданные данные некорректны`));
-      } else next(new ErrorDefault('Ошибка на сервере'));
+      } else {
+        next(err);
+      }
     })
 }
 

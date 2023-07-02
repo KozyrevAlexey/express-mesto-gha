@@ -11,7 +11,7 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
-    validator: {
+    validate: {
       validator: (v) => validator.isURL(v),
       message: 'Введите корректную ссылку',
     }
