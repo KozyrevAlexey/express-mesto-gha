@@ -1,8 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
 const router = require('./routes');
 const cookieParser = require('cookie-parser');
-const { errors } = require('celebrate');
+
 const errorsHandler = require('./middlewares/errorsHandler');
 
 
