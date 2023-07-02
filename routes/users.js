@@ -1,9 +1,12 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { regex } = require('../utils/regex');
+const cookieParser = require('cookie-parser');
 
 const { getUsers, getUserInfo, getUserBuId, updateProfileUser, updateAvatarUser } = require("../controllers/users");
 
+
+router.use(cookieParser());
 
 router.get('/', getUsers);
 router.get('/me', getUserInfo);
