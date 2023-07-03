@@ -16,4 +16,4 @@
 `npm run dev` — запускает сервер с hot-reload
 
 ## Ссылка на проект
- :point_right: [**express-mesto-gha**](https://kozyrevalexey.github.io/express-mesto-gha/)
+ :point_right: [**express-mesto-gha**](https://github.com/KozyrevAlexey/express-mesto-gha)

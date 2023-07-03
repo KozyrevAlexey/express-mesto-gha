@@ -7,6 +7,8 @@ const ErrorAuth = require('../errors/errorAuth');
 const ErrorConflict = require('../errors/errorConflict');
 const ErrorValidation = require('../errors/errorValidation');
 const ErrorNotFound = require('../errors/errorNotFound');
+const errorDefault = require('../errors/errorDefault');
+const ErrorDefault = require('../errors/errorDefault');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -56,7 +58,7 @@ const updateProfileUser = (req, res, next) => {
       if (err.name === "ValidationError") {
         next(new ErrorValidation(`Переданные данные некорректны`));
       } else {
-        next(err);
+        next(new ErrorDefault(`На сервере произошла ошибка`));
       }
     })
 };
@@ -70,7 +72,7 @@ const updateAvatarUser = (req, res) => {
       if (err.name === "ValidationError") {
         next(new ErrorValidation(`Переданные данные некорректны`));
       } else {
-        next(err);
+        next(new ErrorDefault(`На сервере произошла ошибка`));
       }
     })
 }
